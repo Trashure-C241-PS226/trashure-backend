@@ -46,6 +46,7 @@ CREATE TABLE `items` (
     `camera` VARCHAR(50) NULL,
     `battery_capacity` VARCHAR(50) NULL,
     `image` VARCHAR(255) NULL,
+    `tahun_pemakaian` INTEGER NOT NULL,
     `kategori` ENUM('HANDPHONE', 'LAPTOP') NOT NULL,
     `status` ENUM('AVAILABLE', 'SOLDOUT') NOT NULL,
     `minus` TEXT NULL,

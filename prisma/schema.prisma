@@ -69,12 +69,13 @@ model Item {
   camera           String? @db.VarChar(50)
   battery_capacity String? @db.VarChar(50)
   image            String? @db.VarChar(255)
+  tahun_pemakaian  Int
   kategori         Type
   status           Status
   minus            String? @db.Text
 
   user_id      Int
-  user         User      @relation(fields: [user_id], references: [id])
+  user         User       @relation(fields: [user_id], references: [id])
   collector_id Int?
   collector    Collector? @relation(fields: [collector_id], references: [id])
 
