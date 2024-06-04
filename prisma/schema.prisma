@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int     @id @default(autoincrement())
+  email     String  @db.VarChar(255)
+  password  String  @db.VarChar(100)
+  fullname  String  @db.VarChar(255)
+  nomor     String  @db.VarChar(15)
+  image     String? @db.VarChar(255)
+  provinsi  String  @db.VarChar(255)
+  kab_kota  String  @db.VarChar(255)
+  kecamatan String  @db.VarChar(255)
+  kode_pos  String  @db.VarChar(10)
+  token     String? @db.VarChar(100)
+
+  items Item[]
+
+  @@map("users")
+}
+
+enum Type {
+  HANDPHONE
+  LAPTOP
+}
+
+model Collector {
+  id        Int     @id @default(autoincrement())
+  email     String  @db.VarChar(255)
+  password  String  @db.VarChar(100)
+  name      String  @db.VarChar(255)
+  nomor     String  @db.VarChar(15)
+  image     String? @db.VarChar(255)
+  provinsi  String  @db.VarChar(255)
+  kab_kota  String  @db.VarChar(255)
+  kecamatan String  @db.VarChar(255)
+  kode_pos  String  @db.VarChar(10)
+  tipe      Type
+  deskripsi String  @db.Text
+  token     String? @db.VarChar(100)
+
+  items Item[]
+
+  @@map("collectors")
+}
+
+enum Status {
+  AVAILABLE
+  SOLDOUT
+}
+
+model Item {
+  id               Int     @id @default(autoincrement())
+  brand            String? @db.VarChar(100)
+  storage          String? @db.VarChar(100)
+  harga            String? @db.VarChar(100)
+  predict_harga    String? @db.VarChar(100)
+  ram              String? @db.VarChar(50)
+  screen_size      String? @db.VarChar(50)
+  camera           String? @db.VarChar(50)
+  battery_capacity String? @db.VarChar(50)
+  image            String? @db.VarChar(255)
+  kategori         Type
+  status           Status
+  minus            String? @db.Text
+
+  user_id      Int
+  user         User      @relation(fields: [user_id], references: [id])
+  collector_id Int?
+  collector    Collector? @relation(fields: [collector_id], references: [id])
+
+  @@map("items")
+}
