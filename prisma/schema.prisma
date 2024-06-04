@@ -29,8 +29,8 @@ model User {
 }
 
 enum Type {
-  HANDPHONE
-  LAPTOP
+  Handphone
+  Laptop
 }
 
 model Collector {
@@ -54,8 +54,8 @@ model Collector {
 }
 
 enum Status {
-  AVAILABLE
-  SOLDOUT
+  Available
+  SoldOut
 }
 
 model Item {
