@@ -46,7 +46,7 @@ model Collector {
   kode_pos  String  @db.VarChar(10)
   tipe      Type
   deskripsi String  @db.Text
-  token     String? @db.VarChar(100)
+  token     String? @db.Text
 
   items Item[]
 
