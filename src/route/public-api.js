@@ -11,5 +11,6 @@ publicRouter.post("/api/collectors/login", collectorController.login);
 
 // route users
 publicRouter.post("/api/users", userController.register);
+publicRouter.post("/api/users/login", userController.login);
 
 export { publicRouter };

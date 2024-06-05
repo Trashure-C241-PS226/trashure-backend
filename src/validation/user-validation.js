@@ -12,4 +12,9 @@ const registerUserValidation = Joi.object({
   kode_pos: Joi.string().max(255).required(),
 });
 
-export { registerUserValidation };
+const loginUserValidation = Joi.object({
+  email: Joi.string().max(255).email().required(),
+  password: Joi.string().max(100).required(),
+});
+
+export { registerUserValidation, loginUserValidation };

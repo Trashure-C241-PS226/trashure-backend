@@ -1,6 +1,10 @@
 import { prismaClient } from "../app/database.js";
 import { ResponseError } from "../error/response-error.js";
-import { registerUserValidation } from "../validation/user-validation.js";
+import { generateToken } from "../middleware/auth-middleware.js";
+import {
+  loginUserValidation,
+  registerUserValidation,
+} from "../validation/user-validation.js";
 import { validate } from "../validation/validation.js";
 import bcrypt from "bcrypt";
 
@@ -33,4 +37,45 @@ const register = async (request) => {
   });
 };
 
-export default { register };
+const login = async (request) => {
+  const loginRequest = validate(loginUserValidation, request);
+  const user = await prismaClient.user.findUnique({
+    where: {
+      email: loginRequest.email,
+    },
+    select: {
+      email: true,
+      password: true,
+    },
+  });
+
+  console.log(user);
+
+  if (!user) throw new ResponseError(401, "Username or password wrong");
+
+  const isPasswordValid = await bcrypt.compare(
+    loginRequest.password,
+    user.password
+  );
+
+  if (!isPasswordValid)
+    throw new ResponseError(401, "Username or password wrong");
+
+  // const secret = process.env.JWT_SECRET;
+  // const expiresIn = 60 * 60 * 1;
+  const token = generateToken(user);
+
+  return prismaClient.user.update({
+    data: {
+      token: token,
+    },
+    where: {
+      email: user.email,
+    },
+    select: {
+      token: true,
+    },
+  });
+};
+
+export default { register, login };
