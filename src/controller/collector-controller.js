@@ -5,7 +5,7 @@ const register = async (req, res, next) => {
 		const result = await collectorService.register(req.body);
 		
         res.status(201).json({
-			message: "User berhasil dibuat!",
+			message: "Collector berhasil dibuat!",
 			success: true,
 			data: result,
 		});
@@ -19,7 +19,7 @@ const login = async (req, res, next) => {
         const result = await collectorService.login(req.body);
         
         res.status(200).json({
-            message: "User berhasil login!",
+            message: "Collector berhasil login!",
             success: true,
             data: result,
         });
@@ -28,4 +28,33 @@ const login = async (req, res, next) => {
     }
 }
 
-export default { register, login };
+const get = async (req, res, next) => {
+    try {
+        const id = req.data.id;
+        const result = await collectorService.get(id);
+        
+        res.status(200).json({
+            message: "Berhasil mendapatkan Collector!",
+            success: true,
+            data: result,
+        });
+    } catch (e) {
+        next(e);
+    }
+}
+
+const logout = async (req, res, next) => {
+    try {
+        const result = await collectorService.logout();
+        
+        res.status(200).json({
+            message: "Collector berhasil keluar!",
+            success: true,
+            data: result,
+        });
+    } catch (e) {
+        next(e);
+    }
+}
+
+export default { register, login, get, logout };

@@ -5,6 +5,7 @@ import collectorController from "../controller/collector-controller.js";
 
 const publicRouter = new express.Router();
 
+// route collectors
 publicRouter.post("/api/collectors", collectorController.register);
 publicRouter.post("/api/collectors/login", collectorController.login);
 
