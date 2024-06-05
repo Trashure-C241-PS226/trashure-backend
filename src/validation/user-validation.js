@@ -17,4 +17,17 @@ const loginUserValidation = Joi.object({
   password: Joi.string().max(100).required(),
 });
 
-export { registerUserValidation, loginUserValidation };
+const updateUserValidation = Joi.object({
+  id: Joi.number().required(),
+  email: Joi.string().max(255).email().required(),
+  password: Joi.string().max(100).optional(),
+  fullname: Joi.string().max(255).optional(),
+  nomor: Joi.string().max(15).optional(),
+  image: Joi.string().max(255).optional(),
+  provinsi: Joi.string().max(255).optional(),
+  kab_kota: Joi.string().max(255).optional(),
+  kecamatan: Joi.string().max(255).optional(),
+  kode_pos: Joi.string().max(255).optional(),
+});
+
+export { registerUserValidation, loginUserValidation, updateUserValidation };

@@ -4,6 +4,7 @@ import { generateToken } from "../middleware/auth-middleware.js";
 import {
   loginUserValidation,
   registerUserValidation,
+  updateUserValidation,
 } from "../validation/user-validation.js";
 import { validate } from "../validation/validation.js";
 import bcrypt from "bcrypt";
@@ -50,8 +51,6 @@ const login = async (request) => {
     },
   });
 
-  console.log(user);
-
   if (!user) throw new ResponseError(401, "Username or password wrong");
 
   const isPasswordValid = await bcrypt.compare(
@@ -62,8 +61,6 @@ const login = async (request) => {
   if (!isPasswordValid)
     throw new ResponseError(401, "Username or password wrong");
 
-  // const secret = process.env.JWT_SECRET;
-  // const expiresIn = 60 * 60 * 1;
   const token = generateToken(user);
 
   return prismaClient.user.update({
@@ -79,4 +76,96 @@ const login = async (request) => {
   });
 };
 
-export default { register, login };
+const update = async (request) => {
+  const user = validate(updateUserValidation, request);
+
+  const totalUserInDatabase = await prismaClient.user.count({
+    where: {
+      email: user.email,
+    },
+  });
+
+  if (totalUserInDatabase !== 1) throw new ResponseError(404, "User not found");
+
+  const data = {
+    fullname: user?.fullname,
+    nomor: user?.nomor,
+    provinsi: user?.provinsi,
+    kab_kota: user?.kab_kota,
+    kecamatan: user?.kecamatan,
+    kode_pos: user?.kode_pos,
+  };
+
+  if (user.password) {
+    data.password = await bcrypt.hash(user.password, 10);
+  }
+
+  return await prismaClient.user.update({
+    where: {
+      id: user.id,
+    },
+    data: data,
+    select: {
+      fullname: true,
+      nomor: true,
+      image: true,
+      provinsi: true,
+      kab_kota: true,
+      kecamatan: true,
+      kode_pos: true,
+    },
+  });
+};
+
+const get = async (request) => {
+  console.log(request);
+  const user = await prismaClient.user.findUnique({
+    where: {
+      id: request,
+    },
+    select: {
+      email: true,
+      fullname: true,
+      nomor: true,
+      image: true,
+      provinsi: true,
+      kab_kota: true,
+      kecamatan: true,
+      kode_pos: true,
+      items: true,
+    },
+  });
+  console.log(request);
+
+  if (!user) throw new ResponseError(404, "User tidak ditemukan ");
+
+  return user;
+};
+
+const logout = async (id) => {
+  const user = await prismaClient.user.findUnique({
+    where: {
+      id: id,
+    },
+  });
+
+  if (!user) {
+    throw new ResponseError(404, "user is not found");
+  }
+
+  return prismaClient.user.update({
+    where: {
+      id: id,
+    },
+    data: {
+      token: null,
+    },
+    // select: {},
+  });
+};
+
+const getAllPengepuls = async () => {
+  return await prismaClient.collector.findMany({});
+};
+
+export default { register, login, update, get, logout, getAllPengepuls };
