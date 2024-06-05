@@ -3,8 +3,7 @@ import { validate } from "../validation/validation.js";
 import { prismaClient } from "../app/database.js";
 import { ResponseError } from "../error/response-error.js";
 import bcrypt from "bcrypt";
-import { generateToken, tokenWithPastExp } from "../middleware/auth-middleware.js";
-import { logger } from "../app/logging.js";
+import { generateToken } from "../middleware/auth-middleware.js";
 
 const register = async (request) => {
 	const collectorReq = validate(registerCollectorValidation, request);
@@ -31,34 +30,32 @@ const login = async (request) => {
 		where: {
 			email: loginRequest.email,
 		},
+		select: {
+			id: true,
+			email: true,
+			password: true,
+		},
 	});
 
 	if (!collector) throw new ResponseError(401, "Email or password wrong");
 
 	const isPasswordValid = await bcrypt.compare(loginRequest.password, collector.password);
+
 	if (!isPasswordValid) throw new ResponseError(401, "Email or password wrong");
 
-	let jwtToken = null;
-	jwtToken = generateToken(collector);
-	// logger.info(jwtToken);
+	const jwtToken = generateToken(collector);
 
-	// const result = await prismaClient.collector.update({
-	// 	data: {
-	// 		token: jwtToken,
-	// 	},
-	// 	where: {
-	// 		id: collector.id,
-	// 	},
-	// 	select: {
-	// 		token: true,
-	// 	},
-	// });
-	// logger.info(result);
-
-	// const impacted = await prismaClient.$executeRaw`UPDATE collectors SET token = ${jwtToken} WHERE id = ${collector.id};`;
-	// const collectors = await prismaClient.$queryRaw`SELECT * FROM collectors WHERE id = ${collector.id}`;
-
-	return jwtToken;
+	return prismaClient.collector.update({
+		data: {
+			token: jwtToken,
+		},
+		where: {
+			email: collector.email,
+		},
+		select: {
+			token: true,
+		},
+	});
 };
 
 const get = async (idToken) => {
@@ -67,17 +64,37 @@ const get = async (idToken) => {
 			id: idToken,
 		},
 		include: {
-			items: true
-		}
+			items: true,
+		},
 	});
-	
+
 	if (!collector) throw new ResponseError(404, "Collector is not found");
-	
+
 	return collector;
 };
 
-const logout = async () => {
-	return tokenWithPastExp;
+const logout = async (idToken) => {
+	const collector = await prismaClient.collector.findUnique({
+		where: {
+			id: idToken,
+		},
+	});
+
+	if (!collector) {
+		throw new ResponseError(404, "user is not found");
+	}
+
+	return prismaClient.collector.update({
+		where: {
+			id: collector.id,
+		},
+		data: {
+			token: null,
+		},
+		select: {
+			email: true,
+		},
+	});
 };
 
 export default { register, login, get, logout };
