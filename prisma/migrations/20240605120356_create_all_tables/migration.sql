@@ -10,8 +10,9 @@ CREATE TABLE `users` (
     `kab_kota` VARCHAR(255) NOT NULL,
     `kecamatan` VARCHAR(255) NOT NULL,
     `kode_pos` VARCHAR(10) NOT NULL,
-    `token` VARCHAR(100) NULL,
+    `token` TEXT NULL,
 
+    UNIQUE INDEX `users_email_key`(`email`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -29,8 +30,9 @@ CREATE TABLE `collectors` (
     `kode_pos` VARCHAR(10) NOT NULL,
     `tipe` ENUM('Handphone', 'Laptop') NOT NULL,
     `deskripsi` TEXT NOT NULL,
-    `token` VARCHAR(100) NULL,
+    `token` TEXT NULL,
 
+    UNIQUE INDEX `collectors_email_key`(`email`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 

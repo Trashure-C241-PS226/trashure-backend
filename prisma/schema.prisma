@@ -12,7 +12,7 @@ datasource db {
 
 model User {
   id        Int     @id @default(autoincrement())
-  email     String  @db.VarChar(255)
+  email     String  @unique @db.VarChar(255)
   password  String  @db.VarChar(100)
   fullname  String  @db.VarChar(255)
   nomor     String  @db.VarChar(15)
@@ -21,7 +21,7 @@ model User {
   kab_kota  String  @db.VarChar(255)
   kecamatan String  @db.VarChar(255)
   kode_pos  String  @db.VarChar(10)
-  token     String? @db.VarChar(100)
+  token     String? @db.Text
 
   items Item[]
 
@@ -35,7 +35,7 @@ enum Type {
 
 model Collector {
   id        Int     @id @default(autoincrement())
-  email     String  @db.VarChar(255)
+  email     String  @unique @db.VarChar(255)
   password  String  @db.VarChar(100)
   name      String  @db.VarChar(255)
   nomor     String  @db.VarChar(15)
