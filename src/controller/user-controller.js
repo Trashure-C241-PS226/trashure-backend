@@ -1,3 +1,4 @@
+import { logger } from "../app/logging.js";
 import userService from "../service/user-service.js";
 
 const register = async (req, res, next) => {
@@ -65,7 +66,7 @@ const logout = async (req, res, next) => {
   try {
     await userService.logout(req.data.id);
     res.status(200).json({
-      message: "Gagal logout!",
+      message: "Berhasil Logout!",
       success: true,
       data: {},
     });
@@ -76,7 +77,7 @@ const logout = async (req, res, next) => {
 
 const getAllPengepuls = async (req, res, next) => {
   try {
-    const result = await userService.getAllPengepuls();
+    const result = await userService.getAllPengepuls(req.data.id);
     res.status(200).json({
       message: "Berhasil mendapatkan pengepul!",
       success: true,
@@ -87,4 +88,26 @@ const getAllPengepuls = async (req, res, next) => {
   }
 };
 
-export default { register, login, update, get, logout, getAllPengepuls };
+const getPengepullById = async (req, res, next) => {
+  try {
+    const pengepul_id = parseInt(req.params.collectorId);
+    const result = await userService.getPengepullById(pengepul_id);
+    res.status(200).json({
+      message: "Berhasil mendapatkan detail pengepul!",
+      success: true,
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+export default {
+  register,
+  login,
+  update,
+  get,
+  logout,
+  getAllPengepuls,
+  getPengepullById,
+};

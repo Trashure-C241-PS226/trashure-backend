@@ -1,4 +1,5 @@
 import { prismaClient } from "../app/database.js";
+import { logger } from "../app/logging.js";
 import { ResponseError } from "../error/response-error.js";
 import { generateToken } from "../middleware/auth-middleware.js";
 import {
@@ -21,8 +22,6 @@ const register = async (request) => {
   if (countUser === 1) throw new ResponseError(400, "Username already exists");
 
   user.password = await bcrypt.hash(user.password, 10);
-
-  console.log(user);
 
   return await prismaClient.user.create({
     data: user,
@@ -48,6 +47,7 @@ const login = async (request) => {
       id: true,
       email: true,
       password: true,
+      kab_kota: true,
     },
   });
 
@@ -118,7 +118,6 @@ const update = async (request) => {
 };
 
 const get = async (request) => {
-  console.log(request);
   const user = await prismaClient.user.findUnique({
     where: {
       id: request,
@@ -135,7 +134,6 @@ const get = async (request) => {
       items: true,
     },
   });
-  console.log(request);
 
   if (!user) throw new ResponseError(404, "User tidak ditemukan ");
 
@@ -164,8 +162,79 @@ const logout = async (id) => {
   });
 };
 
-const getAllPengepuls = async () => {
-  return await prismaClient.collector.findMany({});
+const getAllPengepuls = async (pengepul_id) => {
+  const user = await prismaClient.user.findUnique({
+    where: {
+      id: pengepul_id,
+    },
+    select: {
+      kab_kota: true,
+    },
+  });
+
+  if (!user) {
+    throw new ResponseError(404, "user is not found");
+  }
+
+  const result = await prismaClient.collector.findMany({
+    where: {
+      kab_kota: user.kab_kota,
+    },
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      nomor: true,
+      image: true,
+      provinsi: true,
+      kab_kota: true,
+      kecamatan: true,
+      kode_pos: true,
+      tipe: true,
+      deskripsi: true,
+    },
+  });
+
+  if (result.length == 0)
+    throw new ResponseError(404, "Tidak ada pengepul di daerah anda!");
+
+  return result;
 };
 
-export default { register, login, update, get, logout, getAllPengepuls };
+const getPengepullById = async (id) => {
+  logger.info([id]);
+  const pengepul = await prismaClient.collector.findUnique({
+    where: {
+      id: id,
+    },
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      nomor: true,
+      image: true,
+      provinsi: true,
+      kab_kota: true,
+      kecamatan: true,
+      kode_pos: true,
+      tipe: true,
+      deskripsi: true,
+    },
+  });
+
+  if (!pengepul) {
+    throw new ResponseError(404, "user is not found");
+  }
+
+  return pengepul;
+};
+
+export default {
+  register,
+  login,
+  update,
+  get,
+  logout,
+  getAllPengepuls,
+  getPengepullById,
+};
