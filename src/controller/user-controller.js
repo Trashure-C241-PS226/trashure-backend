@@ -66,7 +66,7 @@ const logout = async (req, res, next) => {
   try {
     await userService.logout(req.data.id);
     res.status(200).json({
-      message: "Berhasil Logout!",
+      message: "User berhasil keluar!",
       success: true,
       data: {},
     });

@@ -47,7 +47,6 @@ const login = async (request) => {
       id: true,
       email: true,
       password: true,
-      kab_kota: true,
     },
   });
 
@@ -223,7 +222,7 @@ const getPengepullById = async (id) => {
   });
 
   if (!pengepul) {
-    throw new ResponseError(404, "user is not found");
+    throw new ResponseError(404, "Collector is not found");
   }
 
   return pengepul;
