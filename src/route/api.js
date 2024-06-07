@@ -2,29 +2,27 @@ import express from "express";
 
 import collectorController from "../controller/collector-controller.js";
 import itemController from "../controller/item-controller.js";
-import { authenticateToken } from "../middleware/auth-middleware.js";
+import { authenticateTokenUser, authenticateTokenCollector } from "../middleware/auth-middleware.js";
 import userController from "../controller/user-controller.js";
 
-const privateRouter = new express.Router();
+const userRouter = new express.Router();
+const collectorRouter = new express.Router();
 
-privateRouter.use(authenticateToken);
+userRouter.use(authenticateTokenUser);
+collectorRouter.use(authenticateTokenCollector);
 
 // private route collectors
-privateRouter.get("/api/collectors", collectorController.get);
-privateRouter.delete("/api/collectors/logout", collectorController.logout);
+collectorRouter.get("", collectorController.get);
+collectorRouter.delete("/logout", collectorController.logout);
 
 // private route items
-privateRouter.post("/api/users/item", itemController.create);
-privateRouter.patch("/api/collectors/items/:id", itemController.updateSold);
-privateRouter.patch(
-  "/api/collectors/items/:id/reject",
-  itemController.updateAvailable
-);
+userRouter.post("/collectors/:id/items", itemController.create);
+userRouter.patch("/items/:id", itemController.update);
 
-// private route user
-privateRouter.patch("/api/users", userController.update);
-privateRouter.get("/api/users", userController.get);
-privateRouter.delete("/api/users", userController.logout);
-privateRouter.get("/api/users/pengepuls", userController.getAllPengepuls);
+// private route users
+userRouter.patch("", userController.update);
+userRouter.get("", userController.get);
+userRouter.delete("", userController.logout);
+userRouter.get("/pengepuls", userController.getAllPengepuls);
 
-export { privateRouter };
+export { userRouter, collectorRouter };

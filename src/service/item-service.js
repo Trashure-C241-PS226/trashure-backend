@@ -1,47 +1,50 @@
-import { createItemValidation } from "../validation/item-validation.js";
+import { createItemValidation, updateItemValidation } from "../validation/item-validation.js";
 import { validate } from "../validation/validation.js";
 import { prismaClient } from "../app/database.js";
 import { ResponseError } from "../error/response-error.js";
-import { logger } from "../app/logging.js";
 
-const create = async (user, request) => {
+const create = async (user, idCollector, request) => {
 	const itemReq = validate(createItemValidation, request);
 	itemReq.user_id = user.id;
+	itemReq.collector_id = parseInt(idCollector, 10);
 	itemReq.status = "Available";
 
-    logger.info(itemReq)
+	const findCollector = await prismaClient.collector.count({
+		where: {
+			id: itemReq.collector_id,
+		},
+	});
+
+	if (findCollector !== 1) throw new ResponseError(400, "Collector is not found");
 
 	return prismaClient.item.create({
 		data: itemReq,
 	});
 };
 
-const updateStatusSold = async (collector, idItem) => {
-    const idItemInt = parseInt(idItem, 10);
+const update = async (idItem, request) => {
+	const idItemInt = parseInt(idItem, 10);
+	const itemReqUpdate = validate(updateItemValidation, request);
 
-    return prismaClient.item.update({
-        data: {
-            collector_id: collector.id,
-            status: "SoldOut"
-        }, 
-        where: {
-            id: idItemInt
-        },
-    })
-}
+	const findItem = await prismaClient.item.count({
+		where: {
+			id: idItemInt,
+		},
+	});
 
-const updateStatusAvailable = async (idItem) => {
-    const idItemInt = parseInt(idItem, 10);
+	if (findItem !== 1) {
+		throw new ResponseError(400, "Item is not found");
+	}
 
-    return prismaClient.item.update({
-        data: {
-            collector_id: null,
-            status: "Available"
-        }, 
-        where: {
-            id: idItemInt
-        },
-    })
-}
+	return prismaClient.item.update({
+		where: {
+			id: idItemInt,
+		},
+		data: itemReqUpdate,
+	});
+};
 
-export default { create, updateStatusSold, updateStatusAvailable };
+export default {
+	create,
+	update,
+};
