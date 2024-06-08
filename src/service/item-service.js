@@ -2,8 +2,9 @@ import { createItemValidation, updateItemValidation } from "../validation/item-v
 import { validate } from "../validation/validation.js";
 import { prismaClient } from "../app/database.js";
 import { ResponseError } from "../error/response-error.js";
+import { getPublicUrl, uploadToGCS } from "../utils/imgUpload.js";
 
-const create = async (user, idCollector, request) => {
+const create = async (user, idCollector, request, imgReq) => {
 	const itemReq = validate(createItemValidation, request);
 	itemReq.user_id = user.id;
 	itemReq.collector_id = parseInt(idCollector, 10);
@@ -16,6 +17,11 @@ const create = async (user, idCollector, request) => {
 	});
 
 	if (findCollector !== 1) throw new ResponseError(400, "Collector is not found");
+	
+	// upload image to Cloud Storage
+	await uploadToGCS("item", imgReq)
+
+	itemReq.image = getPublicUrl("item", imgReq.name)
 
 	return prismaClient.item.create({
 		data: itemReq,

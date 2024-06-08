@@ -5,8 +5,9 @@ const create = async (req, res, next) => {
 		const user = req.data;
 		const idCollector = req.params.id;
 		const request = req.body;
+		const imgReq = req.files.image;
 		
-		const result = await itemService.create(user, idCollector, request);
+		const result = await itemService.create(user, idCollector, request, imgReq);
 
 		res.status(201).json({
 			message: "Barang berhasil dibuat!",

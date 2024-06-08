@@ -4,7 +4,6 @@ import { prismaClient } from "../app/database.js";
 import { ResponseError } from "../error/response-error.js";
 import bcrypt from "bcrypt";
 import { generateToken } from "../middleware/auth-middleware.js";
-import { logger } from "../app/logging.js";
 import { getPublicUrl, uploadToGCS } from "../utils/imgUpload.js";
 
 const register = async (request, imgReq) => {
