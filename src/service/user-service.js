@@ -2,6 +2,7 @@ import { prismaClient } from "../app/database.js";
 import { logger } from "../app/logging.js";
 import { ResponseError } from "../error/response-error.js";
 import { generateToken } from "../middleware/auth-middleware.js";
+import { getPublicUrl, uploadToGCS } from "../utils/imgUpload.js";
 import {
   loginUserValidation,
   registerUserValidation,
@@ -75,7 +76,7 @@ const login = async (request) => {
   });
 };
 
-const update = async (request) => {
+const update = async (request, imgReq) => {
   const user = validate(updateUserValidation, request);
 
   const totalUserInDatabase = await prismaClient.user.count({
@@ -98,6 +99,9 @@ const update = async (request) => {
   if (user.password) {
     data.password = await bcrypt.hash(user.password, 10);
   }
+
+  await uploadToGCS("user", imgReq);
+  data.image = getPublicUrl("user", imgReq.name);
 
   return await prismaClient.user.update({
     where: {

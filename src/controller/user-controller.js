@@ -35,8 +35,9 @@ const update = async (req, res, next) => {
     const request_id = req.data.id;
     request.id = request_id;
     request.email = req.data.email;
+    const imgReq = req.files.image;
 
-    const result = await userService.update(request);
+    const result = await userService.update(request, imgReq);
     res.status(200).json({
       message: "Profile berhasil dirubah",
       success: true,
