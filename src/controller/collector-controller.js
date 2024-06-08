@@ -2,7 +2,8 @@ import collectorService from "../service/collector-service.js";
 
 const register = async (req, res, next) => {
 	try {
-		const result = await collectorService.register(req.body);
+        const imgReq = req.files.image;
+		const result = await collectorService.register(req.body, imgReq);
 		
         res.status(201).json({
 			message: "Collector berhasil dibuat!",

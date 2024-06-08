@@ -4,8 +4,10 @@ import { prismaClient } from "../app/database.js";
 import { ResponseError } from "../error/response-error.js";
 import bcrypt from "bcrypt";
 import { generateToken } from "../middleware/auth-middleware.js";
+import { logger } from "../app/logging.js";
+import { getPublicUrl, uploadToGCS } from "../utils/imgUpload.js";
 
-const register = async (request) => {
+const register = async (request, imgReq) => {
 	const collectorReq = validate(registerCollectorValidation, request);
 
 	const countUser = await prismaClient.collector.count({
@@ -15,6 +17,11 @@ const register = async (request) => {
 	});
 
 	if (countUser === 1) throw new ResponseError(400, "User already Registered");
+	
+	// upload image to Cloud Storage
+	await uploadToGCS("collector", imgReq)
+
+	collectorReq.image = getPublicUrl("collector", imgReq.name)
 
 	collectorReq.password = await bcrypt.hash(collectorReq.password, 10);
 
