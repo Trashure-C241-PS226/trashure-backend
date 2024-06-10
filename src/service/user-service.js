@@ -28,12 +28,11 @@ const register = async (request) => {
     data: user,
     select: {
       email: true,
-      fullname: true,
+      username: true,
       nomor: true,
       provinsi: true,
       kab_kota: true,
       kecamatan: true,
-      kode_pos: true,
     },
   });
 };
@@ -88,12 +87,11 @@ const update = async (request, imgReq) => {
   if (totalUserInDatabase !== 1) throw new ResponseError(404, "User not found");
 
   const data = {
-    fullname: user?.fullname,
+    username: user?.username,
     nomor: user?.nomor,
     provinsi: user?.provinsi,
     kab_kota: user?.kab_kota,
     kecamatan: user?.kecamatan,
-    kode_pos: user?.kode_pos,
   };
 
   if (user.password) {
@@ -109,13 +107,12 @@ const update = async (request, imgReq) => {
     },
     data: data,
     select: {
-      fullname: true,
+      username: true,
       nomor: true,
       image: true,
       provinsi: true,
       kab_kota: true,
       kecamatan: true,
-      kode_pos: true,
     },
   });
 };
@@ -127,13 +124,12 @@ const get = async (request) => {
     },
     select: {
       email: true,
-      fullname: true,
+      username: true,
       nomor: true,
       image: true,
       provinsi: true,
       kab_kota: true,
       kecamatan: true,
-      kode_pos: true,
       items: true,
     },
   });
@@ -192,7 +188,6 @@ const getAllPengepuls = async (pengepul_id) => {
       provinsi: true,
       kab_kota: true,
       kecamatan: true,
-      kode_pos: true,
       tipe: true,
       deskripsi: true,
     },
@@ -219,7 +214,6 @@ const getPengepullById = async (id) => {
       provinsi: true,
       kab_kota: true,
       kecamatan: true,
-      kode_pos: true,
       tipe: true,
       deskripsi: true,
     },
