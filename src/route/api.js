@@ -21,6 +21,7 @@ collectorRouter.delete("/logout", collectorController.logout);
 // private route items
 userRouter.post("/collectors/:id/items", itemController.create);
 userRouter.patch("/items/:id", itemController.update);
+userRouter.post("/items/predict", itemController.predict);
 
 // private route users
 userRouter.patch("", userController.update);

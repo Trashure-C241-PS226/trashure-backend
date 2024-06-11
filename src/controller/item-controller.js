@@ -1,4 +1,6 @@
+import { logger } from "../app/logging.js";
 import itemService from "../service/item-service.js";
+import { loadModel } from "../utils/loadModel.js";
 
 const create = async (req, res, next) => {
 	try {
@@ -6,7 +8,7 @@ const create = async (req, res, next) => {
 		const idCollector = req.params.id;
 		const request = req.body;
 		const imgReq = req.files.image;
-		
+
 		const result = await itemService.create(user, idCollector, request, imgReq);
 
 		res.status(201).json({
@@ -22,7 +24,7 @@ const create = async (req, res, next) => {
 const update = async (req, res, next) => {
 	try {
 		const idItem = req.params.id;
-		const request =  req.body;
+		const request = req.body;
 
 		const result = await itemService.update(idItem, request);
 
@@ -36,5 +38,23 @@ const update = async (req, res, next) => {
 	}
 };
 
+const predict = async (req, res, next) => {
+	try {
+		const request = req.body;
+		const model = await loadModel();
 
-export default { create, update };
+		logger.info("model : "+ model)
+
+		const result = await itemService.predict(model, request);
+
+		res.status(200).json({
+			message: "Prediksi Harga berhasil didapatkan!",
+			success: true,
+			data: result,
+		});
+	} catch (e) {
+		next(e);
+	}
+};
+
+export default { create, update, predict };

@@ -1,4 +1,4 @@
-import { createItemValidation, updateItemValidation } from "../validation/item-validation.js";
+import { createItemValidation, predictItemValidation, updateItemValidation } from "../validation/item-validation.js";
 import { validate } from "../validation/validation.js";
 import { prismaClient } from "../app/database.js";
 import { ResponseError } from "../error/response-error.js";
@@ -19,11 +19,11 @@ const create = async (user, idCollector, request, imgReq) => {
 	});
 
 	if (findCollector !== 1) throw new ResponseError(400, "Collector is not found");
-	
-	// upload image to Cloud Storage
-	await uploadToGCS("item", imgReq)
 
-	itemReq.image = getPublicUrl("item", imgReq.name)
+	// upload image to Cloud Storage
+	await uploadToGCS("item", imgReq);
+
+	itemReq.image = getPublicUrl("item", imgReq.name);
 
 	return prismaClient.item.create({
 		data: itemReq,
@@ -52,7 +52,15 @@ const update = async (idItem, request) => {
 	});
 };
 
+const predict = async (model, request) => {
+	const itemReq = validate(predictItemValidation, request);
+
+
+	return itemReq;
+};
+
 export default {
 	create,
 	update,
+	predict,
 };
