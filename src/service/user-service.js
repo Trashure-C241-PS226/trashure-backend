@@ -10,6 +10,7 @@ import {
 } from "../validation/user-validation.js";
 import { validate } from "../validation/validation.js";
 import bcrypt from "bcrypt";
+import { dateID } from "../utils/date.js";
 
 const register = async (request) => {
   const user = validate(registerUserValidation, request);
@@ -77,6 +78,7 @@ const login = async (request) => {
 
 const update = async (request, imgReq) => {
   const user = validate(updateUserValidation, request);
+  imgReq.name = dateID() + "T" + imgReq.name;
 
   const totalUserInDatabase = await prismaClient.user.count({
     where: {

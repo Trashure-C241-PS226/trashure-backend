@@ -3,12 +3,14 @@ import { validate } from "../validation/validation.js";
 import { prismaClient } from "../app/database.js";
 import { ResponseError } from "../error/response-error.js";
 import { getPublicUrl, uploadToGCS } from "../utils/imgUpload.js";
+import { dateID } from "../utils/date.js";
 
 const create = async (user, idCollector, request, imgReq) => {
 	const itemReq = validate(createItemValidation, request);
 	itemReq.user_id = user.id;
 	itemReq.collector_id = parseInt(idCollector, 10);
 	itemReq.status = "Available";
+	imgReq.name = dateID() + "T" + imgReq.name;
 
 	const findCollector = await prismaClient.collector.count({
 		where: {
