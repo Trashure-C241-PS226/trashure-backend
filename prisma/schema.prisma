@@ -59,9 +59,9 @@ enum Status {
 model Item {
   id               Int     @id @default(autoincrement())
   brand            String? @db.VarChar(100)
+  model            String? @db.VarChar(100)
   storage          String? @db.VarChar(100)
   harga            String? @db.VarChar(100)
-  predict_harga    String? @db.VarChar(100)
   ram              String? @db.VarChar(50)
   screen_size      String? @db.VarChar(50)
   camera           String? @db.VarChar(50)

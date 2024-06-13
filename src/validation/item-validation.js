@@ -2,6 +2,7 @@ import Joi from "joi";
 
 const createItemValidation = Joi.object({
 	brand: Joi.string().max(100).optional(),
+	model: Joi.string().max(100).optional(),
 	storage: Joi.string().max(100).optional(),
 	harga: Joi.string().max(100).optional(),
 	ram: Joi.string().max(50).optional(),
@@ -15,6 +16,7 @@ const createItemValidation = Joi.object({
 
 const updateItemValidation = Joi.object({
 	brand: Joi.string().max(100).optional(),
+	model: Joi.string().max(100).optional(),
 	storage: Joi.string().max(100).optional(),
 	harga: Joi.string().max(100).optional(),
 	ram: Joi.string().max(50).optional(),
@@ -35,6 +37,7 @@ const predictItemValidation = Joi.object({
 	screen_size: Joi.string().max(50).optional(),
 	camera: Joi.string().max(50).optional(),
 	battery_capacity: Joi.string().max(50).optional(),
+	tahun_pemakaian: Joi.number().optional(),
 });
 
 export { createItemValidation, updateItemValidation, predictItemValidation };

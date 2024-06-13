@@ -38,9 +38,9 @@ CREATE TABLE `collectors` (
 CREATE TABLE `items` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `brand` VARCHAR(100) NULL,
+    `model` VARCHAR(100) NULL,
     `storage` VARCHAR(100) NULL,
     `harga` VARCHAR(100) NULL,
-    `predict_harga` VARCHAR(100) NULL,
     `ram` VARCHAR(50) NULL,
     `screen_size` VARCHAR(50) NULL,
     `camera` VARCHAR(50) NULL,

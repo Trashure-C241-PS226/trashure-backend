@@ -1,6 +1,5 @@
-import { logger } from "../app/logging.js";
+import { web } from "../app/web.js";
 import itemService from "../service/item-service.js";
-import { loadModel } from "../utils/loadModel.js";
 
 const create = async (req, res, next) => {
 	try {
@@ -41,9 +40,7 @@ const update = async (req, res, next) => {
 const predict = async (req, res, next) => {
 	try {
 		const request = req.body;
-		const model = await loadModel();
-
-		logger.info("model : "+ model)
+		const model = web.locals.model;
 
 		const result = await itemService.predict(model, request);
 
