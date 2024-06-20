@@ -46,7 +46,6 @@ src/
 We use TensorFlow.js to get prediction results from the model developed by the Machine Learning Engineer. This allows the application to make price predictions using the trained model.
 
 If you notice, there is a Python file in the `utils` folder. This file is used to standardize the data that TensorFlow.js will later need for predictions. This approach was implemented in accordance with the agreement made with the Machine Learning Engineer from the Trashure team. Therefore it is also necessary:
-Therefore, Python 3 and its associated tools are required:
 
 1. `python3`: Installs Python 3, the programming language.
 2. `python3-pip`: Installs pip, the package installer for Python 3.
